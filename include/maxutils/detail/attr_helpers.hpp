@@ -8,9 +8,6 @@
 #include "max_types.h"
 
 namespace maxutils::detail {
-    using c74::max::gensym;
-    using c74::max::t_symbol;
-
     template<typename T>
     t_symbol *type_to_symbol() {
         if constexpr (std::is_same_v<std::remove_all_extents_t<T>, long>) {

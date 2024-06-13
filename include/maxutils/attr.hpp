@@ -5,7 +5,7 @@
 #ifndef ATTR_HPP
 #define ATTR_HPP
 
-#include "max_types.h"
+#include "ext.h"
 #include "c74_jitter.h"
 #include <string>
 #include <sstream>
@@ -202,10 +202,10 @@ namespace maxutils {
             return JIT_ERR_NONE;
         }
 
-        OffsetAttrBuilder &style_with_enum_indices() {
-            class_attr_addattr_parse(this->c, this->name.c_str(), "style", gensym("symbol"), 0, "enumindex");
-            return *this;
-        }
+        // OffsetAttrBuilder &style_with_enum_indices() {
+        //     class_attr_addattr_parse(this->c, this->name.c_str(), "style", gensym("symbol"), 0, "enumindex");
+        //     return *this;
+        // }
     };
 
     template <auto Member>
