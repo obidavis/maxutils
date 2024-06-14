@@ -135,6 +135,15 @@ namespace maxutils {
             object_method(attr, gensym("setmethod"), gensym("set"), (method) +setter);
             return static_cast<Derived &>(*this);
         }
+
+        Derived &with_flags(long flags) {
+            long old_flags = (long)object_method(attr, gensym("getflags"));
+            object_method(attr, gensym("setflags"), old_flags | flags);
+        }
+
+        Derived &get_defer_low_set_usurp_low() {
+            return with_flags(JIT_ATTR_GET_DEFER_LOW | JIT_ATTR_SET_USURP_LOW);
+        }
     protected:
         t_class *c;
         std::string name;

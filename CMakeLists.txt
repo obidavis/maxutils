@@ -27,7 +27,8 @@ add_library(${PROJECT_NAME} INTERFACE include/maxutils/attr.hpp include/maxutils
         include/maxutils/detail/concepts.hpp
         include/maxutils/detail/member_pointer.hpp
         include/maxutils/detail/functors.hpp
-        test/src/test_attr/meta.cpp)
+        test/src/test_attr/meta.cpp
+        include/maxutils/t_object_raii.hpp)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/max-includes)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/jit-includes)
