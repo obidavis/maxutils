@@ -5,9 +5,6 @@
 #ifndef OBJECT_HANDLE_HPP
 #define OBJECT_HANDLE_HPP
 
-#ifndef MAXUTILS_HPP
-#define MAXUTILS_HPP
-
 #include <memory>
 #include "ext.h"
 
