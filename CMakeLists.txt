@@ -20,19 +20,7 @@ if (FETCH_MAX_SDK_FROM_GITHUB)
 endif()
 
 
-add_library(${PROJECT_NAME} INTERFACE include/maxutils/attr.hpp include/maxutils/jit_matrix_helpers.hpp
-        include/maxutils/detail/attr_helpers.hpp
-        include/maxutils/detail/reflection.hpp
-        include/maxutils/detail/fixed_string.hpp
-        include/maxutils/detail/concepts.hpp
-        include/maxutils/detail/member_pointer.hpp
-        include/maxutils/detail/functors.hpp
-        test/src/test_attr/meta.cpp
-        include/maxutils/object_handle.hpp
-        include/maxutils/jit_opencv.hpp
-        include/maxutils/object_handle.hpp
-        include/maxutils/names_matrix.hpp
-        include/maxutils/named_matrix.hpp)
+add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/max-includes)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/jit-includes)
