@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <cctype>
 
-#include "magic_enum/magic_enum.hpp"
+#include "magic_enum.hpp"
 
 #include "detail/attr_helpers.hpp"
 #include "detail/reflection.hpp"
