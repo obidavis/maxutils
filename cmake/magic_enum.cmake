@@ -6,5 +6,5 @@ FetchContent_Declare(magic_enum
         GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(magic_enum)
-include_directories(${magic_enum_SOURCE_DIR}/include)
+target_link_libraries(maxutils INTERFACE magic_enum)
 
