@@ -139,6 +139,7 @@ namespace maxutils {
         Derived &with_flags(long flags) {
             long old_flags = (long)object_method(attr, gensym("getflags"));
             object_method(attr, gensym("setflags"), old_flags | flags);
+            return static_cast<Derived &>(*this);
         }
 
         Derived &get_defer_low_set_usurp_low() {
