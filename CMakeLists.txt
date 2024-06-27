@@ -19,8 +19,10 @@ if (FETCH_MAX_SDK_FROM_GITHUB)
     set(MAX_SDK_BASE ${max-sdk-base_SOURCE_DIR})
 endif()
 
+file(GLOB PROJECT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} include/*)
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCES}
+        include/maxutils/attributes.hpp)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/max-includes)
 target_include_directories(${PROJECT_NAME} INTERFACE ${MAX_SDK_BASE}/c74support/jit-includes)

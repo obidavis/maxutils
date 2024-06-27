@@ -4,6 +4,7 @@
 
 #include "ext.h"
 #include "maxutils/attr.hpp"
+#include "maxutils/attributes.hpp"
 
 using namespace c74::max;
 

@@ -54,8 +54,8 @@ namespace maxutils {
 
     template <typename T>
     static constexpr auto atom_get(t_atom *atom) {
-        if constexpr (std::is_arithmetic_v<T>) {
-            return atom_getfloat(atom);
+        if constexpr (std::is_integral_v<T>) {
+            return atom_getlong(atom);
         } else if constexpr (std::is_floating_point_v<T>) {
             return atom_getfloat(atom);
         } else if constexpr (std::is_same_v<T, t_symbol *>) {
@@ -353,15 +353,15 @@ namespace maxutils {
         }
     };
 
-    template<auto Member>
-    auto create_attr(t_class *c, std::string name = std::string(detail::get_name<Member>())) {
-        return OffsetAttrBuilder<Member>(c, name);
-    }
-
-    template <typename Getter, typename Setter>
-    auto create_attr(t_class *c, std::string name, Getter getter, Setter setter) {
-        return MethodAttrBuilder<Getter, Setter>(c, name, getter, setter);
-    }
+    // template<auto Member>
+    // auto create_attr(t_class *c, std::string name = std::string(detail::get_name<Member>())) {
+    //     return OffsetAttrBuilder<Member>(c, name);
+    // }
+    //
+    // template <typename Getter, typename Setter>
+    // auto create_attr(t_class *c, std::string name, Getter getter, Setter setter) {
+    //     return MethodAttrBuilder<Getter, Setter>(c, name, getter, setter);
+    // }
 
 
     template <auto Member>
