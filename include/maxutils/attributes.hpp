@@ -6,8 +6,11 @@
 #define ATTRIBUTES_HPP
 
 #include <type_traits>
-#include <format>
+#include "detail/attr_helpers.hpp"
 #include "detail/member_pointer.hpp"
+#include "detail/functors.hpp"
+#include "detail/reflection.hpp"
+#include "magic_enum.hpp"
 #include "ext_obex.h"
 
 namespace maxutils {
@@ -38,13 +41,18 @@ namespace maxutils {
         template <typename Derived>
         class attr_builder {
         public:
-            Derived &with_label() {
-                class_attr_addattr_parse(c, name.c_str(), "label", gensym("symbol"), 0, name.c_str());
+            Derived &with_label(const std::string &label) {
+                class_attr_addattr_parse(c, name.c_str(), "label", gensym("symbol"), 0, label.c_str());
                 return static_cast<Derived &>(*this);
             }
             Derived &readonly() {
                 long old_flags = (long)object_method(attr, gensym("getflags"));
                 object_method(attr, gensym("setflags"), old_flags | ATTR_SET_OPAQUE);
+                return static_cast<Derived &>(*this);
+            }
+            Derived &user_readonly() {
+                long old_flags = (long)object_method(attr, gensym("getflags"));
+                object_method(attr, gensym("setflags"), old_flags | ATTR_SET_OPAQUE_USER);
                 return static_cast<Derived &>(*this);
             }
         protected:
@@ -116,19 +124,19 @@ namespace maxutils {
                 object_method(this->attr, gensym("setmethod"), gensym("set"), (method) +setter_with_predicate);
                 return *this;
             }
-            offset_attr_builder &with_min_max(double min, double max) requires std::is_arithmetic_v<value_t> {
+            offset_attr_builder &with_min_max(double min, double max) requires (std::is_arithmetic_v<value_t>) {
                 attr_addfilter_clip(this->attr, min, max, 1, 1);
                 return *this;
             }
         protected:
-            static err_t getter(object_t *x, void *, long *argc, t_atom **argv) requires !std::is_enum_v<value_t> {
+            static err_t getter(object_t *x, void *, long *argc, t_atom **argv) requires (!std::is_enum_v<value_t>) {
                 value_t value = x->*member_ptr;
                 char alloc;
                 atom_alloc(argc, argv, &alloc);
                 atom_set(*argv, value);
                 return 0;
             }
-            static err_t getter(object_t *x, void *, long *argc, t_atom **argv) requires std::is_enum_v<value_t> {
+            static err_t getter(object_t *x, void *, long *argc, t_atom **argv) requires (std::is_enum_v<value_t>) {
                 value_t value = x->*member_ptr;
                 std::string value_str(magic_enum::enum_name(value));
                 char alloc;
@@ -136,7 +144,7 @@ namespace maxutils {
                 atom_setsym(*argv, gensym(value_str.c_str()));
                 return 0;
             }
-            static err_t setter(object_t *x, void *, long argc, t_atom *argv) requires !std::is_enum_v<value_t> {
+            static err_t setter(object_t *x, void *, long argc, t_atom *argv) requires (!std::is_enum_v<value_t>) {
                 if (argc != 1) {
                     object_error((t_object *) x, "Expected 1 argument, got %ld", argc);
                     return MAX_ERR_GENERIC;
@@ -144,29 +152,31 @@ namespace maxutils {
                 x->*member_ptr = atom_get<value_t>(argv);
                 return 0;
             }
-            static err_t setter(object_t *x, void *, long argc, t_atom *argv) requires std::is_enum_v<value_t> {
+            static err_t setter(object_t *x, void *, long argc, t_atom *argv) requires (std::is_enum_v<value_t>) {
                 if (argc != 1) {
                     object_error((t_object *) x, "Expected 1 argument, got %ld", argc);
                     return MAX_ERR_GENERIC;
                 }
                 auto value = magic_enum::enum_cast<value_t>(atom_getsym(argv)->s_name);
                 if (!value) {
-                    std::string error_string = std::format("Invalid enum value: {}", atom_getsym(argv)->s_name);
+                    std::string error_string = "Invalid value: " + std::string(atom_getsym(argv)->s_name) + ". ";
                     error_string += "Must be one of: ";
                     for (auto &val : magic_enum::enum_names<value_t>()) {
-                        error_string += "\"" + val + "\" ";
+                        error_string += "\"";
+                        error_string += val;
+                        error_string += "\" ";
                     }
                     object_error((t_object *) x, error_string.c_str());
                     return MAX_ERR_GENERIC;
                 }
-                x->*member_ptr = value.value_or({});
+                x->*member_ptr = value.value_or(value_t{});
                 return MAX_ERR_NONE;
             }
         };
 
         template <auto member_ptr>
         offset_attr_builder<member_ptr>::offset_attr_builder(t_class *c, std::string name)
-            : attr_builder<offset_attr_builder>(c, name, type_to_symbol<value_t>()) {
+            : attr_builder<offset_attr_builder>(c, name, type_to_symbol<value_t>(), member_pointer_info<member_ptr>::offset()) {
 
             if constexpr (std::is_enum_v<value_t>) {
                 class_attr_addattr_parse(c, this->name.c_str(), "style", gensym("symbol"), 0, "enum");
@@ -224,7 +234,7 @@ namespace maxutils {
     }
 
     template <auto member_ptr>
-    auto create_attr(t_class *c, std::string name = detail::get_name<member_ptr>()) {
+    auto create_attr(t_class *c, std::string name = std::string{detail::get_name<member_ptr>()}) {
         return detail::offset_attr_builder<member_ptr>(c, name);
     }
 

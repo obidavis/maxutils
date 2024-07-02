@@ -126,6 +126,9 @@ public:
     template <typename T, std::convertible_to<long> ...Indices>
     T &at(Indices ...indices) {
         assert(sizeof...(indices) == info.dimcount);
+        // if (data_ptr == nullptr) {
+        //     update_info_and_data_ptr();
+        // }
         assert(data_ptr != nullptr);
         long offset = 0;
         long indices_arr[] = {indices...};

@@ -28,8 +28,37 @@ namespace maxutils::detail {
         }
     }
 
-    template <typename ObjT, typename ValueT, auto Member>
-    struct default_accessors;
+    template <typename T>
+    static constexpr auto atom_get(t_atom *atom) {
+        if constexpr (std::is_integral_v<T>) {
+            return atom_getlong(atom);
+        } else if constexpr (std::is_floating_point_v<T>) {
+            return atom_getfloat(atom);
+        } else if constexpr (std::is_same_v<T, t_symbol *>) {
+            return atom_getsym(atom);
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return std::string(atom_getsym(atom)->s_name);
+        } else {
+            static_assert(sizeof(T) == 0, "Unsupported type");
+            __builtin_unreachable();
+        }
+    }
+
+    template <typename T>
+    static void atom_set(t_atom *atom, T value) {
+        if constexpr (std::is_arithmetic_v<T>) {
+            atom_setfloat(atom, value);
+        } else if constexpr (std::is_floating_point_v<T>) {
+            atom_setfloat(atom, value);
+        } else if constexpr (std::is_same_v<T, t_symbol *>) {
+            atom_setsym(atom, value);
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            atom_setsym(atom, gensym(value.c_str()));
+        } else {
+            static_assert(sizeof(T) == 0, "Unsupported type");
+            __builtin_unreachable();
+        }
+    }
 
 }
 

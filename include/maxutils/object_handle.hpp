@@ -52,9 +52,14 @@ namespace maxutils {
     }
 
     class object_handle {
-        std::unique_ptr<t_object, decltype([](t_object *p) { object_free(p); })> ptr;
+        std::unique_ptr<t_object, decltype([](t_object *p) {
+                // post("object destructing %p", p);
+            object_free(p);
+            })> ptr;
     public:
-        object_handle(t_symbol *name, auto && ...args) : ptr{v_object_new(name, std::forward<decltype(args)>(args)...)} {}
+        object_handle(t_symbol *name, auto && ...args) : ptr{v_object_new(name, std::forward<decltype(args)>(args)...)} {
+            // post("object constructing %p", ptr.get());
+        }
         operator t_object *() const { return ptr.get(); }
         operator t_object *() { return ptr.get(); }
     };
@@ -62,6 +67,7 @@ namespace maxutils {
     struct jit_object_deleter {
         void operator()(t_jit_object *p) const {
             assert(p != nullptr);
+            // post("jit destructing %p", p);
             jit_object_free(p);
         }
     };
@@ -71,7 +77,7 @@ namespace maxutils {
     public:
         jit_object_handle(t_symbol *name, auto && ...args) : ptr{v_jit_object_new(name, std::forward<decltype(args)>(args)...)} {
         }
-        jit_object_handle(t_jit_object *p) : ptr{p} {}
+        // jit_object_handle(t_jit_object *p) : ptr{p} {}
         operator t_jit_object *() const { return ptr.get(); }
         operator t_jit_object *() { return ptr.get(); }
     };
