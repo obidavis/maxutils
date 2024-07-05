@@ -58,7 +58,7 @@ namespace maxutils {
         protected:
             attr_builder(t_class *c, std::string name, t_symbol *type, long offset = 0)
                 : c{c}, name{name}, type{type} {
-                attr = attr_offset_new(name.c_str(), gensym("long"), 0, nullptr, nullptr, offset);
+                attr = attr_offset_new(name.c_str(), type, 0, nullptr, nullptr, offset);
                 class_addattr(c, attr);
                 with_label(auto_format_label());
             }
