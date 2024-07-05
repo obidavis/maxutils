@@ -9,6 +9,7 @@
 #include <tuple>
 #include <concepts>
 #include "c74_jitter.h"
+#include <numeric>
 
 namespace maxutils {
     using namespace c74::max;
