@@ -14,6 +14,8 @@
 #include "ext_obex.h"
 
 namespace maxutils {
+    using namespace c74::max;
+
     using err_t = t_atom_long;
     namespace detail {
         template <auto member_ptr>
@@ -42,7 +44,7 @@ namespace maxutils {
         class attr_builder {
         public:
             Derived &with_label(const std::string &label) {
-                class_attr_addattr_parse(c, name.c_str(), "label", gensym("symbol"), 0, label.c_str());
+                class_attr_addattr_format(c, name.c_str(), "label", gensym("symbol"), 0, "s", gensym_tr(label.c_str()));
                 return static_cast<Derived &>(*this);
             }
             Derived &readonly() {

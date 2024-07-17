@@ -6,8 +6,11 @@
 #define ATTR_HELPERS_HPP
 
 #include "max_types.h"
+#include "ext_mess.h"
+#include <string>
 
 namespace maxutils::detail {
+    using namespace c74::max;
     template<typename T>
     t_symbol *type_to_symbol() {
         if constexpr (std::is_same_v<std::remove_all_extents_t<T>, long>) {
