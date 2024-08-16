@@ -181,7 +181,7 @@ namespace maxutils {
         }
 
         template <size_t N>
-        t_jit_err set_dims(long (&dims)[N]) {
+        t_jit_err set_dims(const long (&dims)[N]) {
             for (size_t i = 0; i < N; ++i) {
                 info.dim[i] = dims[i];
             }
