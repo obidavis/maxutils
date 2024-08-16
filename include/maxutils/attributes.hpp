@@ -213,7 +213,7 @@ namespace maxutils {
                 static const auto s_getter = getter;
                 static const auto s_setter = setter;
 
-                const auto getter_method = [](Object *x, void *, long *argc, t_atom **argv) {
+                const auto getter_method = [](Object *x, void *, long *argc, t_atom **argv) -> t_atom_long {
                     Value value = std::invoke(s_getter, x);
                     char alloc;
                     atom_alloc(argc, argv, &alloc);
@@ -221,7 +221,7 @@ namespace maxutils {
                     return 0;
                 };
 
-                const auto setter_method = [](Object *x, void *, long argc, t_atom *argv) {
+                const auto setter_method = [](Object *x, void *, long argc, t_atom *argv) -> t_atom_long {
                     if (argc != 1) {
                         object_error((t_object *) x, "Expected 1 argument, got %ld", argc);
                         return MAX_ERR_GENERIC;
@@ -242,8 +242,8 @@ namespace maxutils {
 
     template <typename Getter, typename Setter>
     auto create_attr(t_class *c, std::string name, Getter &&getter, Setter &&setter) {
-        using getter_object_t = detail::nth_arg_type_t<Getter, 0>;
-        using setter_object_t = detail::nth_arg_type_t<Setter, 0>;
+        using getter_object_t = std::remove_pointer_t<detail::nth_arg_type_t<Getter, 0>>;
+        using setter_object_t = std::remove_pointer_t<detail::nth_arg_type_t<Setter, 0>>;
         static_assert(std::is_same_v<getter_object_t, setter_object_t>, "Getter and setter must have the same object type");
 
         using getter_value_t = detail::return_type_t<Getter>;
