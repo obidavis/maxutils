@@ -118,6 +118,9 @@ namespace maxutils {
             return {data + (dim * planecount), planecount};
         }
 
+        auto as_1d_span() const {
+            return std::span(data, dim * planecount);
+        }
     private:
         row_view(T *data, long planecount, long dim)
             : data{data}, planecount{planecount}, dim{dim} {
